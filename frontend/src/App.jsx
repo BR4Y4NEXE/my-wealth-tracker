@@ -1,34 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState(null)
+
+  useEffect(() => {
+    // Hacemos la petición al backend
+    fetch('http://127.0.0.1:8000/api/test')
+      .then(response => response.json())
+      .then(data => setData(data))
+      .catch(error => console.error('Error conectando:', error));
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{ padding: '50px', fontFamily: 'sans-serif', textAlign: 'center' }}>
+      <h1>Panel de Control Financiero</h1>
+      <p>Estado de la conexión:</p>
+      
+      {data ? (
+        <div style={{ border: '2px solid green', padding: '20px', borderRadius: '10px' }}>
+          <h2>{data.message}</h2>
+          <p>Meta mensual: <strong>${data.dinero_meta} USD</strong></p>
+        </div>
+      ) : (
+        <p>Cargando datos del servidor...</p>
+      )}
+    </div>
   )
 }
 
