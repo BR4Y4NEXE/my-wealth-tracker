@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\TransactionController;
 
 Route::get('/test', function () {
     return response()->json([
@@ -9,3 +10,5 @@ Route::get('/test', function () {
         'dinero_meta' => 3000
     ]);
 });
+
+Route::get('/transactions', [TransactionController::class, 'index']);
