@@ -8,12 +8,28 @@ use App\Models\Transaction;
 class TransactionController extends Controller
 {
     public function index()
-{
-    // Cargar transacciones con su categoría, ordenadas por fecha (más reciente primero)
-    $transactions = Transaction::with('category')
-                    ->orderBy('date', 'desc')
-                    ->get();
+    {
+        $transactions = Transaction::with('category')
+                        ->orderBy('date', 'desc')
+                        ->get();
 
-    return response()->json($transactions);
-}
+        return response()->json($transactions);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'required|string|max:255',
+            'date' => 'required|date',
+        ]);
+
+        $validated['user_id'] = 1;
+
+        $transaction = Transaction::create($validated);
+        $transaction->load('category');
+
+        return response()->json($transaction, 201);
+    }
 }
