@@ -1,16 +1,49 @@
-# React + Vite
+# 💰 MyWealth Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A modern, full-stack personal finance dashboard built to track expenses and analyze spending habits in real-time.
 
-Currently, two official plugins are available:
+![Project Status](https://img.shields.io/badge/status-active-success.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📸 Screenshots
 
-## React Compiler
+<div align="center">
+  <img src="path/to/your/dashboard-screenshot.png" alt="Dashboard View" width="700"/>
+</div>
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 About The Project
 
-## Expanding the ESLint configuration
+MyWealth Tracker is a Single Page Application (SPA) designed to help users achieve financial austerity. It solves the problem of scattered financial data by providing a centralized, clean interface to record income and expenses.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Key Features:**
+- **Real-time Balance Calculation:** Instant updates without page reloads.
+- **Dynamic Visualization:** Interactive Doughnut chart (Chart.js) to visualize expenses by category.
+- **Smart Categorization:** Income/Expense logic with color-coded indicators.
+- **Full CRUD Operations:** Seamlessly Create, Read, Update, and Delete transactions.
+- **Responsive Design:** "Clean Fintech" UI style using TailwindCSS.
+
+## 🛠️ Tech Stack
+
+**Frontend:**
+- React.js (Vite)
+- TailwindCSS (Styling)
+- Chart.js (Data Visualization)
+
+**Backend:**
+- Laravel 11 (API REST)
+- MySQL (Database)
+
+## ⚙️ Installation & Setup
+
+Follow these steps to run the project locally:
+
+### Prerequisites
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL
+
+### 1. Clone the repository
+```bash
+git clone [https://github.com/tu-usuario/my-wealth-tracker.git](https://github.com/tu-usuario/my-wealth-tracker.git)
+cd my-wealth-tracker
