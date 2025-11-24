@@ -3,7 +3,6 @@
 > A modern, full-stack personal finance dashboard built to track expenses and analyze spending habits in real-time.
 
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## 📸 Screenshots
 
