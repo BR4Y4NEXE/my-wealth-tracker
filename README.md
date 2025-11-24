@@ -35,14 +35,14 @@ Sistema de seguimiento de finanzas personales con interfaz moderna estilo fintec
 ## Capturas de Pantalla
 
 ### Dashboard Principal
-<img width="1144" height="1079" alt="image" src="https://github.com/user-attachments/assets/88ad583a-7e5c-427f-9fe8-3634a195b74e" />
+<img width="1188" height="954" alt="image" src="https://github.com/user-attachments/assets/662a28cb-73e5-4bd1-9861-94688339c558" />
 
 
 ### Formulario de Nueva Transacción
-![Formulario](screenshots/form.png)
+<img width="1075" height="985" alt="image" src="https://github.com/user-attachments/assets/2d339dd0-0fd9-4e02-b8d3-db7abaeec6da" />
 
 ### Gráfico de Gastos
-![Gráfico](screenshots/chart.png)
+<img width="524" height="423" alt="image" src="https://github.com/user-attachments/assets/aafe7a97-3576-45a8-9128-4bac5fb48e5d" />
 
 > Nota: Agrega tus capturas en la carpeta `screenshots/`
 
