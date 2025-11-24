@@ -168,10 +168,4 @@ MyWealthTracker/
 - [ ] Metas de ahorro
 - [ ] Modo oscuro
 
-## Autor
-
 Desarrollado como proyecto de práctica para el manejo de finanzas personales.
-
-## Licencia
-
-MIT License
