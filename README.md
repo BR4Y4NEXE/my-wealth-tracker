@@ -35,7 +35,8 @@ Sistema de seguimiento de finanzas personales con interfaz moderna estilo fintec
 ## Capturas de Pantalla
 
 ### Dashboard Principal
-![Dashboard](screenshots/dashboard.png)
+<img width="1144" height="1079" alt="image" src="https://github.com/user-attachments/assets/88ad583a-7e5c-427f-9fe8-3634a195b74e" />
+
 
 ### Formulario de Nueva Transacción
 ![Formulario](screenshots/form.png)
