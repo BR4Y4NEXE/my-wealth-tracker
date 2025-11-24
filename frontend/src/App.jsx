@@ -9,6 +9,7 @@ function App() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState(null)
 
   const [formData, setFormData] = useState({
     type: '',
@@ -37,12 +38,30 @@ function App() {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
   }
 
+  const resetForm = () => {
+    setFormData({
+      type: '',
+      category_id: '',
+      amount: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0]
+    })
+    setEditingId(null)
+    setShowForm(false)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    const url = editingId
+      ? `http://127.0.0.1:8000/api/transactions/${editingId}`
+      : 'http://127.0.0.1:8000/api/transactions'
+
+    const method = editingId ? 'PUT' : 'POST'
+
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/transactions', {
-        method: 'POST',
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -51,16 +70,17 @@ function App() {
       })
 
       if (response.ok) {
-        const newTransaction = await response.json()
-        setTransactions([newTransaction, ...transactions])
-        setFormData({
-          type: '',
-          category_id: '',
-          amount: '',
-          description: '',
-          date: new Date().toISOString().split('T')[0]
-        })
-        setShowForm(false)
+        const savedTransaction = await response.json()
+
+        if (editingId) {
+          setTransactions(transactions.map(t =>
+            t.id === editingId ? savedTransaction : t
+          ))
+        } else {
+          setTransactions([savedTransaction, ...transactions])
+        }
+
+        resetForm()
       } else {
         const error = await response.json()
         alert('Error: ' + JSON.stringify(error.errors))
@@ -71,11 +91,42 @@ function App() {
     }
   }
 
+  const handleEdit = (transaction) => {
+    setFormData({
+      type: transaction.category.type,
+      category_id: transaction.category_id.toString(),
+      amount: transaction.amount,
+      description: transaction.description,
+      date: transaction.date
+    })
+    setEditingId(transaction.id)
+    setShowForm(true)
+  }
+
+  const handleDelete = async (id) => {
+    if (!confirm('¿Eliminar esta transacción?')) return
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/transactions/${id}`, {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' }
+      })
+
+      if (response.ok) {
+        setTransactions(transactions.filter(t => t.id !== id))
+      } else {
+        alert('Error al eliminar')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Error al eliminar la transacción')
+    }
+  }
+
   const balance = transactions.reduce((acc, t) => {
     return t.category?.type === 'income' ? acc + parseFloat(t.amount) : acc - parseFloat(t.amount)
   }, 0)
 
-  // Calcular gastos por categoría para el gráfico
   const expensesByCategory = transactions
     .filter(t => t.category?.type === 'expense')
     .reduce((acc, t) => {
@@ -128,7 +179,6 @@ function App() {
     <div className="min-h-screen bg-gray-100 font-sans px-5 py-10">
       <div className="max-w-4xl mx-auto">
 
-        {/* Header */}
         <header className="mb-8">
           <h1 className="text-gray-900 text-3xl font-bold tracking-tight">
             MyWealth Tracker
@@ -136,9 +186,7 @@ function App() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column */}
           <div>
-            {/* Balance Card */}
             <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
               <p className="text-gray-500 text-sm font-medium mb-2">
                 Balance actual
@@ -148,9 +196,14 @@ function App() {
               </p>
             </div>
 
-            {/* Add Button */}
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => {
+                if (showForm) {
+                  resetForm()
+                } else {
+                  setShowForm(true)
+                }
+              }}
               className={`w-full py-3.5 rounded-xl font-semibold text-sm mb-6 transition-all ${
                 showForm
                   ? 'bg-gray-100 text-gray-500 border border-gray-200'
@@ -160,7 +213,6 @@ function App() {
               {showForm ? 'Cancelar' : 'Nueva transacción'}
             </button>
 
-            {/* Form */}
             {showForm && (
               <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
                 <div className="mb-5">
@@ -245,12 +297,11 @@ function App() {
                   type="submit"
                   className="w-full py-3.5 bg-gray-900 text-white rounded-xl font-semibold text-sm hover:bg-gray-800 transition-colors"
                 >
-                  Guardar
+                  {editingId ? 'Actualizar' : 'Guardar'}
                 </button>
               </form>
             )}
 
-            {/* Transactions List */}
             {loading ? (
               <p className="text-center text-gray-500 text-sm">Cargando...</p>
             ) : (
@@ -265,8 +316,8 @@ function App() {
                   </div>
                 ) : (
                   transactions.map(t => (
-                    <div key={t.id} className="flex justify-between items-center px-5 py-4 border-b border-gray-100">
-                      <div>
+                    <div key={t.id} className="flex justify-between items-center px-5 py-4 border-b border-gray-100 group">
+                      <div className="flex-1">
                         <p className="font-medium text-sm text-gray-900 mb-1">
                           {t.description}
                         </p>
@@ -274,9 +325,31 @@ function App() {
                           {t.category.name} · {t.date}
                         </p>
                       </div>
-                      <span className={`font-semibold text-sm ${t.category.type === 'income' ? 'text-emerald-600' : 'text-red-600'}`}>
-                        {t.category.type === 'income' ? '+' : '-'}{formatMoney(t.amount)}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className={`font-semibold text-sm ${t.category.type === 'income' ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {t.category.type === 'income' ? '+' : '-'}{formatMoney(t.amount)}
+                        </span>
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleEdit(t)}
+                            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                            title="Editar"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(t.id)}
+                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                            title="Eliminar"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ))
                 )}
@@ -284,7 +357,6 @@ function App() {
             )}
           </div>
 
-          {/* Right Column - Chart */}
           <div className="lg:sticky lg:top-10 lg:self-start">
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="font-semibold text-sm text-gray-900 mb-4">

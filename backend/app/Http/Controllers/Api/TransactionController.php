@@ -32,4 +32,25 @@ class TransactionController extends Controller
 
         return response()->json($transaction, 201);
     }
+
+    public function update(Request $request, Transaction $transaction)
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'required|string|max:255',
+            'date' => 'required|date',
+        ]);
+
+        $transaction->update($validated);
+        $transaction->load('category');
+
+        return response()->json($transaction);
+    }
+
+    public function destroy(Transaction $transaction)
+    {
+        $transaction->delete();
+        return response()->json(['message' => 'Deleted'], 200);
+    }
 }
